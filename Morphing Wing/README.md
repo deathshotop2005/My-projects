@@ -1,7 +1,6 @@
 # Morphing Wing Project
 
-Camber-morphing airfoil with independent leading-edge and trailing-edge control, 
-built for [purpose/competition/course].
+Camber-morphing airfoil with independent leading-edge and trailing-edge control.
 
 ## Overview
 - Independent LE/TE actuation via servo-driven mechanism
@@ -10,9 +9,8 @@ built for [purpose/competition/course].
 - Live GUI dashboard for tuning Kp/Ki/Kd
 
 ## Files
-- `Final_assembly_task.STL` — full wing assembly (view directly on GitHub)
-- `Morphing wing_v10.zip` — full SolidWorks native files
-- `viewer.html` — interactive 3D viewer (see it live [here](Morphing Wing/morphing_wing.STL))
+- [`morphing_wing.STL`](https://github.com/deathshotop2005/My-projects/blob/main/Morphing%20Wing/morphing_wing.STL) — full wing assembly (click to view interactive 3D model)
+- [`Morphing wing_v10.zip`](https://github.com/deathshotop2005/My-projects/blob/main/Morphing%20Wing/Morphing%20wing_v10.zip) — full SolidWorks native files
 
 ## Status
 - ✅ Structural/mechanical validation complete
