@@ -1,4 +1,4 @@
-# Honeywell AeroForge: Airfoil Optimization and Analysis
+# AeroForge: Airfoil Optimization and Analysis
 
 This repository contains tools and scripts for the automated screening, machine learning-driven surrogate modeling, and active learning-based optimization of airfoils, utilizing XFOIL for aerodynamic evaluations. This project was developed as part of the RVCE AeroForge Design-A-Thon.
 
