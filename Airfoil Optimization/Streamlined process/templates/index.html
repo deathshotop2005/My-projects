@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroForge UI - Airfoil Optimization</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">AeroForge ✨</div>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Automated Airfoil Optimization Pipeline</p>
+        
+        <div class="nav-links">
+            <div class="step-card" onclick="document.getElementById('data-btn').scrollIntoView({behavior: 'smooth'})">
+                <h3>1. Data Generation</h3>
+                <p>Run XFOIL on raw coordinates to generate the master dataset.</p>
+            </div>
+            <div class="step-card" onclick="document.getElementById('ml-btn').scrollIntoView({behavior: 'smooth'})">
+                <h3>2. ML Surrogate Model</h3>
+                <p>Train XGBoost on dataset & extract feature importance.</p>
+            </div>
+            <div class="step-card" onclick="document.getElementById('ga-btn').scrollIntoView({behavior: 'smooth'})">
+                <h3>3. GA Optimization</h3>
+                <p>Run genetic algorithm with active learning loops.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1>Pipeline Dashboard</h1>
+            <p>Control and monitor the optimization process. <span id="global-status" class="status-badge status-idle">IDLE</span></p>
+        </div>
+
+        <div class="glass-panel">
+            <h2>Process Controls</h2>
+            
+            <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border);">
+                <h3 style="margin-bottom: 1rem; color: #60A5FA;">Data Generation Settings</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; align-items: end;">
+                    <div>
+                        <label for="zip-file" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Coordinates ZIP File (.zip)</label>
+                        <input type="file" id="zip-file" accept=".zip" style="width: 100%; padding: 0.5rem; background: #1E293B; border: 1px solid var(--border); border-radius: 4px; color: white;">
+                    </div>
+                    <div>
+                        <label for="mach" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Mach Number</label>
+                        <input type="number" id="mach" step="0.01" value="0.1" style="width: 100%; padding: 0.6rem; background: #1E293B; border: 1px solid var(--border); border-radius: 4px; color: white;">
+                    </div>
+                    <div>
+                        <label for="reynolds" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Reynolds Number</label>
+                        <input type="number" id="reynolds" step="1000" value="500000" style="width: 100%; padding: 0.6rem; background: #1E293B; border: 1px solid var(--border); border-radius: 4px; color: white;">
+                    </div>
+                    <div>
+                        <label for="ar" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Aspect Ratio</label>
+                        <input type="number" id="ar" step="0.1" value="10.0" style="width: 100%; padding: 0.6rem; background: #1E293B; border: 1px solid var(--border); border-radius: 4px; color: white;">
+                    </div>
+                    <div>
+                        <label for="oswald" style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Oswald Efficiency (e)</label>
+                        <input type="number" id="oswald" step="0.01" value="0.85" style="width: 100%; padding: 0.6rem; background: #1E293B; border: 1px solid var(--border); border-radius: 4px; color: white;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <button id="data-btn" class="button" onclick="runScript('generate')">Generate Data (XFOIL)</button>
+                <button id="ml-btn" class="button" onclick="runScript('train')">Train ML Model</button>
+                <button id="ga-btn" class="button" onclick="runScript('optimize')">Run GA Optimization</button>
+                <button id="cst-btn" class="button" style="background: #10B981;" onclick="runScript('cst_optimize')">Run Advanced CST Optimization</button>
+                <button id="stop-btn" class="button" style="background: #EF4444;" onclick="stopScript()" disabled>Stop Process</button>
+                <button id="dump-btn" class="button" style="background: #991B1B; border: 1px solid #DC2626;" onclick="dumpData()">Dump Previous Iterations</button>
+            </div>
+
+            <h3>Terminal Output</h3>
+            <div class="terminal" id="terminal">
+                <p>System initialized. Ready to run pipeline...</p>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>Results & Analysis</h2>
+            <p>Plots will update automatically when tasks complete.</p>
+            <div class="plots-grid" style="margin-bottom: 2rem;">
+                <div>
+                    <h3 style="margin-bottom: 0.5rem; color: #94A3B8;">Feature Importance</h3>
+                    <img src="/images/feature_importance.png" alt="Run ML model to generate" class="plot-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'300\' style=\'background:%231E293B\'><text x=\'50%\' y=\'50%\' fill=\'%23475569\' text-anchor=\'middle\'>No Image Generated Yet</text></svg>'">
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 0.5rem; color: #94A3B8;">ML Model Accuracy</h3>
+                    <img src="/images/predicted_vs_actual.png" alt="Run ML model to generate" class="plot-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'300\' style=\'background:%231E293B\'><text x=\'50%\' y=\'50%\' fill=\'%23475569\' text-anchor=\'middle\'>No Image Generated Yet</text></svg>'">
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Aerodynamic Optimization Results</h2>
+            <div class="plots-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="result-card" style="grid-column: 1 / -1;">
+                    <h3 style="margin-bottom: 0.5rem; color: #94A3B8;">Final Optimized Airfoil Geometry</h3>
+                    <img id="plot-optimized" src="/images/optimized_airfoil.png" alt="Optimized Airfoil" class="plot-img" onerror="this.style.display='none'">
+                </div>
+                <div class="result-card">
+                    <h3 style="margin-bottom: 0.5rem; color: #94A3B8;">Lift Coefficient (Cl vs AoA)</h3>
+                    <img id="plot-cl" src="/images/cl_vs_aoa.png" alt="Cl Polar" class="plot-img" onerror="this.style.display='none'">
+                </div>
+                <div class="result-card">
+                    <h3 style="margin-bottom: 0.5rem; color: #94A3B8;">Drag Coefficient (Cd vs AoA)</h3>
+                    <img id="plot-cd" src="/images/cd_vs_aoa.png" alt="Cd Polar" class="plot-img" onerror="this.style.display='none'">
+                </div>
+                
+                <div id="metrics-container" class="result-card" style="grid-column: 1 / -1; display: none; margin-top: 1rem;">
+                    <h3 style="color: #60A5FA; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Comprehensive Aerodynamic Metrics</h3>
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.95rem;">
+                        <tbody id="metrics-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

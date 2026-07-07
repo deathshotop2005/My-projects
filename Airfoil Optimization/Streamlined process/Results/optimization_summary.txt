@@ -1,0 +1,18 @@
+==================================================
+GA OPTIMIZATION SUMMARY
+==================================================
+
+Total Generations Run: 15
+Total Airfoils Simulated in XFOIL: 66
+
+--- WINNING AIRFOIL ---
+File Name: gen10_rank2.dat
+Peak L/D : 161.06
+
+Optimized Geometry Parameters:
+  Thickness    : 0.1078
+  Thickness Loc: 0.2834
+  Camber       : 0.0549
+  Camber Loc   : 0.4896
+  LE Radius    : 0.0254
+  TE Angle     : 13.8992

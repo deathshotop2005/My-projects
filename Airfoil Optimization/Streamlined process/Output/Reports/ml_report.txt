@@ -1,0 +1,43 @@
+============================================================
+ML MODEL REPORT — AIRFOIL OPTIMIZATION
+============================================================
+
+Model type    : XGBoost Regressor
+Target        : peak_LD_3d
+Features used : ['Thickness', 'Thickness_Location', 'Camber', 'Camber_Location']
+Parameters    : {'n_estimators': 1000, 'max_depth': 6, 'learning_rate': 0.05, 'subsample': 0.8, 'colsample_bytree': 0.8, 'min_child_weight': 3, 'reg_alpha': 0.1, 'reg_lambda': 1.0, 'random_state': 42, 'n_jobs': -1}
+
+MODEL PERFORMANCE:
+  CV R² (mean ± std) : 0.6963 ± 0.0657
+  CV R² scores       : [0.5884, 0.6834, 0.7869, 0.6879, 0.7348]
+  Test R²            : 0.6689
+  Test MAE           : 1.3685
+  Test RMSE          : 1.9694
+
+PEARSON CORRELATIONS WITH peak_LD:
+  Thickness            r = -0.5408
+  Camber               r = -0.4929
+  Thickness_Location   r = +0.0598
+  Camber_Location      r = -0.0064
+
+XGBOOST FEATURE IMPORTANCE:
+  1. Camber               38.19%
+  2. Thickness            29.05%
+  3. Camber_Location      16.46%
+  4. Thickness_Location   16.30%
+
+HYBRID AIRFOIL TARGET GEOMETRY:
+  Thickness            0.105774  (10.58%)
+  Thickness_Location   0.316974  (31.70%)
+  Camber               0.024655  (2.47%)
+  Camber_Location      0.485751  (48.58%)
+
+HOW TO USE THE SURROGATE MODEL:
+  import pickle
+  with open('surrogate_model.pkl', 'rb') as f:
+      pkg = pickle.load(f)
+  model = pkg['model']
+  # predict L/D for new geometry:
+  X_new = [[Thickness, Thickness_Location, Camber,
+            Camber_Location]]
+  predicted_ld = model.predict(X_new)[0]

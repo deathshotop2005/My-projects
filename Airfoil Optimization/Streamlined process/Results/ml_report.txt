@@ -1,0 +1,49 @@
+============================================================
+ML MODEL REPORT — AIRFOIL OPTIMIZATION
+============================================================
+
+Model type    : XGBoost Regressor
+Target        : peak_LD
+Features used : ['thickness', 'thickness_loc', 'camber', 'camber_loc', 'le_radius', 'te_angle']
+Parameters    : {'n_estimators': 1000, 'max_depth': 6, 'learning_rate': 0.05, 'subsample': 0.8, 'colsample_bytree': 0.8, 'min_child_weight': 3, 'reg_alpha': 0.1, 'reg_lambda': 1.0, 'random_state': 42, 'n_jobs': -1}
+
+MODEL PERFORMANCE:
+  CV R² (mean ± std) : 0.6237 ± 0.0813
+  CV R² scores       : [0.7344, 0.5097, 0.657, 0.5527, 0.6646]
+  Test R²            : 0.5165
+  Test MAE           : 7.3655
+  Test RMSE          : 12.9170
+
+PEARSON CORRELATIONS WITH peak_LD:
+  le_radius            r = -0.2188
+  camber               r = +0.2057
+  camber_loc           r = +0.1790
+  thickness            r = -0.0481
+  thickness_loc        r = -0.0467
+  te_angle             r = -0.0388
+
+XGBOOST FEATURE IMPORTANCE:
+  1. camber               39.55%
+  2. camber_loc           20.76%
+  3. le_radius            12.85%
+  4. thickness            12.52%
+  5. thickness_loc        7.46%
+  6. te_angle             6.85%
+
+HYBRID AIRFOIL TARGET GEOMETRY:
+  thickness            0.164742  (16.47%)
+  thickness_loc        0.309574  (30.96%)
+  camber               0.051828  (5.18%)
+  camber_loc           0.420498  (42.05%)
+  le_radius            0.030312  (3.03%)
+  te_angle             9.615060  (961.51%)
+
+HOW TO USE THE SURROGATE MODEL:
+  import pickle
+  with open('surrogate_model.pkl', 'rb') as f:
+      pkg = pickle.load(f)
+  model = pkg['model']
+  # predict L/D for new geometry:
+  X_new = [[thickness, thickness_loc, camber,
+            camber_loc, le_radius, te_angle]]
+  predicted_ld = model.predict(X_new)[0]

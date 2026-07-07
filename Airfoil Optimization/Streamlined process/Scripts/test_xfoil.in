@@ -1,0 +1,15 @@
+PLOP
+G
+LOAD ..\..\coord_seligFmt\goe238.dat
+PANE
+OPER
+ALFA 0.0
+VISC 500000
+MACH 0.0
+ITER 100
+PACC
+xfoil_polar_test.txt
+
+ASEQ 0 15 1
+PACC
+QUIT

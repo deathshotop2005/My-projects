@@ -1,0 +1,15 @@
+{
+    "terminal.integrated.defaultProfile.windows": "WSL-dp2",
+    "terminal.integrated.profiles.windows": {
+        "WSL-dp2": {
+            "path": "C:\\WINDOWS\\System32\\wsl.exe",
+            "args": [
+                "bash",
+                "-c",
+                "source ~/miniconda3/etc/profile.d/conda.sh && conda activate dp2 && exec bash"
+            ]
+        }
+    },
+    "python.defaultInterpreterPath": "/home/ompat/miniconda3/envs/dp2/bin/python",
+    "python.condaPath": "/home/ompat/miniconda3/bin/conda"
+}
