@@ -12,7 +12,7 @@ built for [purpose/competition/course].
 ## Files
 - `Final_assembly_task.STL` — full wing assembly (view directly on GitHub)
 - `Morphing wing_v10.zip` — full SolidWorks native files
-- `viewer.html` — interactive 3D viewer (see it live [here](your-github-pages-link))
+- `viewer.html` — interactive 3D viewer (see it live [here](Morphing Wing/morphing_wing.STL))
 
 ## Status
 - ✅ Structural/mechanical validation complete
