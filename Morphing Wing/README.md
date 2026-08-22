@@ -13,7 +13,9 @@ Camber-morphing airfoil with independent leading-edge and trailing-edge control.
 - [`Morphing wing_v10.zip`](https://github.com/deathshotop2005/My-projects/blob/main/Morphing%20Wing/Morphing%20wing_v10.zip) — full SolidWorks native files
 
 ## Media
-<video src="Morphing%20wing_1st_prototype.mp4" controls="controls" style="max-width: 100%;"></video>
+https://github.com/deathshotop2005/My-projects/raw/main/Morphing%20Wing/Morphing%20wing_1st_prototype.mp4
+
+[Click here to watch the video if it doesn't load automatically](Morphing%20wing_1st_prototype.mp4)
 
 ## Status
 - Structural/mechanical validation complete

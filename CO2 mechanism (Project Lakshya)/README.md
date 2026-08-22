@@ -22,10 +22,14 @@ mechanical validation, as part of the recovery subsystem for Project Lakshya.
 
 ## Media
 ### Puncturing Mechanism Test 1
-<video src="CO2%20canister%20puncturing%20mechanism.mp4" controls="controls" style="max-width: 100%;"></video>
+https://github.com/deathshotop2005/My-projects/raw/main/CO2%20mechanism%20(Project%20Lakshya)/CO2%20canister%20puncturing%20mechanism.mp4
+
+[Click here to watch Test 1](CO2%20canister%20puncturing%20mechanism.mp4)
 
 ### Puncturing Mechanism Test 2
-<video src="CO2%20canister%20puncturing%20mechanism_2.mp4" controls="controls" style="max-width: 100%;"></video>
+https://github.com/deathshotop2005/My-projects/raw/main/CO2%20mechanism%20(Project%20Lakshya)/CO2%20canister%20puncturing%20mechanism_2.mp4
+
+[Click here to watch Test 2](CO2%20canister%20puncturing%20mechanism_2.mp4)
 
 ## Status
 -  Design complete
