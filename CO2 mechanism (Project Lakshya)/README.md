@@ -20,6 +20,13 @@ mechanical validation, as part of the recovery subsystem for Project Lakshya.
 ## Files
 - [`Final_assembly_task.STL`](https://github.com/deathshotop2005/My-projects/blob/main/CO2%20mechanism%20(Project%20Lakshya)/Final_assembly_task.STL) — full ejection mechanism assembly (click to view interactive 3D model)
 
+## Media
+### Puncturing Mechanism Test 1
+<video src="CO2%20canister%20puncturing%20mechanism.mp4" controls="controls" style="max-width: 100%;"></video>
+
+### Puncturing Mechanism Test 2
+<video src="CO2%20canister%20puncturing%20mechanism_2.mp4" controls="controls" style="max-width: 100%;"></video>
+
 ## Status
 -  Design complete
 -  Flight tested — successful ejection and recovery at 998m apogee
