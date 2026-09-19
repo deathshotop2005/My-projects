@@ -33,7 +33,8 @@ class PropulsionCalculator(tk.Tk):
         self.var_P1 = tk.DoubleVar(value=4.0)
         self.var_k = tk.DoubleVar(value=1.131)
         self.var_P2 = tk.DoubleVar(value=0.101325)
-        self.var_L = tk.StringVar() # Required, no default
+        self.var_mass = tk.DoubleVar(value=10.0) # Default 10kg
+        self.var_twr = tk.DoubleVar(value=8.0) # Default 8:1
         self.var_d = tk.StringVar() # Required, no default
         
         self.create_widgets()
@@ -80,7 +81,8 @@ class PropulsionCalculator(tk.Tk):
             ("Chamber Pressure (P1) [MPa]:", self.var_P1),
             ("Ratio of Specific Heats (k):", self.var_k),
             ("Exit Pressure (P2) [MPa]:", self.var_P2),
-            ("Core Length (L) [mm]:", self.var_L),
+            ("Rocket Mass (m) [kg]:", self.var_mass),
+            ("Thrust to Weight Ratio:", self.var_twr),
             ("Core Diameter (d) [mm]:", self.var_d)
         ]
         
@@ -102,16 +104,20 @@ class PropulsionCalculator(tk.Tk):
             "Kn": tk.StringVar(value="-"),
             "Cf": tk.StringVar(value="-"),
             "Area_throat": tk.StringVar(value="-"),
-            "Thrust": tk.StringVar(value="-"),
-            "Expansion_Ratio": tk.StringVar(value="-")
+            "D_throat": tk.StringVar(value="-"),
+            "Expansion_Ratio": tk.StringVar(value="-"),
+            "D_exit": tk.StringVar(value="-"),
+            "Req_L": tk.StringVar(value="-")
         }
         
         outputs = [
             ("Burn Area to Throat Area Ratio (Kn):", self.result_vars["Kn"]),
             ("Thrust Coefficient (Cf):", self.result_vars["Cf"]),
             ("Throat Area [mm\u00b2]:", self.result_vars["Area_throat"]),
-            ("Thrust Produced (F) [N]:", self.result_vars["Thrust"]),
-            ("Expansion Ratio (\u03b5):", self.result_vars["Expansion_Ratio"])
+            ("Throat Diameter [mm]:", self.result_vars["D_throat"]),
+            ("Expansion Ratio (\u03b5):", self.result_vars["Expansion_Ratio"]),
+            ("Exit Diameter [mm]:", self.result_vars["D_exit"]),
+            ("Required Core Length (L) [mm]:", self.result_vars["Req_L"])
         ]
         
         for idx, (label_text, var) in enumerate(outputs):
@@ -143,25 +149,28 @@ class PropulsionCalculator(tk.Tk):
             P1 = self.var_P1.get()
             k = self.var_k.get()
             P2 = self.var_P2.get()
+            mass = self.var_mass.get()
+            twr = self.var_twr.get()
             
             # Validate required inputs
-            l_str = self.var_L.get().strip()
             d_str = self.var_d.get().strip()
             
-            if not l_str or not d_str:
-                messagebox.showerror("Input Error", "Core Length (L) and Core Diameter (d) are required fields.")
+            if not d_str:
+                messagebox.showerror("Input Error", "Core Diameter (d) is a required field.")
                 return
                 
-            L = float(l_str)
             d = float(d_str)
             
-            if P1 <= 0 or a <= 0 or rho_p <= 0 or c_star <= 0 or k <= 1 or P2 <= 0 or L <= 0 or d <= 0:
+            if P1 <= 0 or a <= 0 or rho_p <= 0 or c_star <= 0 or k <= 1 or P2 <= 0 or d <= 0 or mass <= 0 or twr <= 0:
                 messagebox.showerror("Input Error", "Values must be strictly positive (and k > 1).")
                 return
                 
             if P2 >= P1:
                 messagebox.showerror("Input Error", "Exit pressure (P2) must be less than Chamber pressure (P1).")
                 return
+            
+            # Target thrust
+            F = mass * 9.80665 * twr
 
             # 1. Kn
             kn_val = (math.pow(P1, 1 - n) / (a * rho_p * c_star)) * 1e6
@@ -173,10 +182,13 @@ class PropulsionCalculator(tk.Tk):
             cf_val = math.sqrt(term1 * term2 * term3)
             
             # 3. Area of throat
-            area_throat_val = (math.pi * d * L) / kn_val
+            area_throat_val = F / (cf_val * P1)
             
-            # 4. Thrust Produced (F)
-            thrust_val = cf_val * area_throat_val * P1
+            # Throat Diameter
+            d_throat_val = math.sqrt((4 * area_throat_val) / math.pi)
+            
+            # 4. Required Core Length (L)
+            req_l_val = (area_throat_val * kn_val) / (math.pi * d)
             
             # 5. Expansion Ratio (epsilon)
             er_term1 = math.pow((k + 1) / 2, 1 / (k - 1))
@@ -185,15 +197,21 @@ class PropulsionCalculator(tk.Tk):
             inv_epsilon = er_term1 * er_term2 * er_term3
             epsilon_val = 1 / inv_epsilon if inv_epsilon > 0 else float('inf')
             
+            # Exit area and diameter
+            area_exit_val = area_throat_val * epsilon_val
+            d_exit_val = math.sqrt((4 * area_exit_val) / math.pi)
+
             # Update GUI
             self.result_vars["Kn"].set(f"{kn_val:.2f}")
             self.result_vars["Cf"].set(f"{cf_val:.4f}")
             self.result_vars["Area_throat"].set(f"{area_throat_val:.2f} mm\u00b2")
-            self.result_vars["Thrust"].set(f"{thrust_val:.2f} N")
+            self.result_vars["D_throat"].set(f"{d_throat_val:.2f}")
             self.result_vars["Expansion_Ratio"].set(f"{epsilon_val:.2f}")
+            self.result_vars["D_exit"].set(f"{d_exit_val:.2f}")
+            self.result_vars["Req_L"].set(f"{req_l_val:.2f}")
             
             # Save to CSV (Excel Sheet)
-            self.save_to_csv(a, n, rho_p, c_star, P1, k, P2, L, d, kn_val, cf_val, area_throat_val, thrust_val, epsilon_val)
+            self.save_to_csv(a, n, rho_p, c_star, P1, k, P2, mass, twr, d, kn_val, cf_val, area_throat_val, d_throat_val, epsilon_val, d_exit_val, req_l_val)
             
 
         except ValueError:
@@ -201,7 +219,7 @@ class PropulsionCalculator(tk.Tk):
         except Exception as e:
             messagebox.showerror("Calculation Error", f"An error occurred: {str(e)}")
 
-    def save_to_csv(self, a, n, rho_p, c_star, P1, k, P2, L, d, Kn, Cf, Area_throat, Thrust, Expansion_Ratio):
+    def save_to_csv(self, a, n, rho_p, c_star, P1, k, P2, mass, twr, d, Kn, Cf, Area_throat, D_throat, Expansion_Ratio, D_exit, Req_L):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.join(script_dir, "iteration_history.csv")
         file_exists = os.path.isfile(filename)
@@ -214,14 +232,14 @@ class PropulsionCalculator(tk.Tk):
                     # Write header
                     writer.writerow([
                         "Timestamp", "a (mm/s)", "n", "rho_p (g/cm\u00b3)", "c* (m/s)", "P1 (MPa)", "k", "P2 (MPa)", 
-                        "L (mm)", "d (mm)", "Kn", "Cf", "Area_throat (mm\u00b2)", "Thrust (N)", "Expansion Ratio (\u03b5)"
+                        "Mass (kg)", "TWR", "d (mm)", "Kn", "Cf", "Area_throat (mm\u00b2)", "D_throat (mm)", "Expansion Ratio (\u03b5)", "D_exit (mm)", "Req_L (mm)"
                     ])
                     
                 # Write data
                 writer.writerow([
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    a, n, rho_p, c_star, P1, k, P2, L, d,
-                    round(Kn, 2), round(Cf, 4), round(Area_throat, 2), round(Thrust, 2), round(Expansion_Ratio, 2)
+                    a, n, rho_p, c_star, P1, k, P2, mass, twr, d,
+                    round(Kn, 2), round(Cf, 4), round(Area_throat, 2), round(D_throat, 2), round(Expansion_Ratio, 2), round(D_exit, 2), round(Req_L, 2)
                 ])
         except Exception as e:
             messagebox.showwarning("Save Error", f"Could not save iteration to Excel/CSV file: {str(e)}\nPlease make sure the file is not currently open in Excel.")

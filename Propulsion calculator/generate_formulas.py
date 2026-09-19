@@ -9,8 +9,8 @@ fig.patch.set_facecolor('#EBEBEB') # Match Tkinter's 'clam' background roughly
 formulas = [
     r"Burn Area to Throat Area Ratio ($K_n$) = $\frac{P_1^{(1-n)}}{a \cdot \rho_p \cdot c^*} \times 10^6$",
     r"Thrust Coefficient ($C_F$) = $\sqrt{\frac{2k^2}{k-1} \left(\frac{2}{k+1}\right)^{\frac{k+1}{k-1}} \left[ 1 - \left(\frac{P_2}{P_1}\right)^{\frac{k-1}{k}} \right] }$",
-    r"Throat Area ($Area_{throat}$) = $\frac{\pi d L}{K_n}$",
-    r"Thrust Produced ($F$) = $C_F \cdot Area_{throat} \cdot P_1$",
+    r"Throat Area ($Area_{throat}$) = $\frac{F}{C_F \cdot P_1}$",
+    r"Required Core Length ($L$) = $\frac{Area_{throat} \cdot K_n}{\pi \cdot d}$",
     r"Expansion Ratio ($\epsilon$) = $\left(\frac{k+1}{2}\right)^{\frac{1}{k-1}} \left(\frac{P_2}{P_1}\right)^{\frac{1}{k}} \sqrt{\frac{k+1}{k-1} \left[ 1 - \left(\frac{P_2}{P_1}\right)^{\frac{k-1}{k}} \right] }^{-1}$"
 ]
 
