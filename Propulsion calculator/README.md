@@ -21,7 +21,13 @@ Propulsion Calculator is a Python-based graphical user interface (GUI) applicati
 
 ## Getting Started
 
-### Running the Application
+### Option 1: Running the Executable (Recommended)
+You can run the application directly without installing Python or any dependencies:
+1. Navigate to the `dist` folder in this repository.
+2. Download and run the `calculator.exe` file.
+
+### Option 2: Running from Source
+If you prefer to run the script directly via Python:
 1. Ensure Python 3 is installed on your system.
 2. Clone or download this repository folder.
 3. Open a terminal or command prompt in the `Propulsion Calculator` directory.
